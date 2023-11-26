@@ -63,6 +63,7 @@ export function handleMouseMove(event) {
     const { x: mouseX, y: mouseY } = calculateMouseCoordinates(event);
     const deltaX = mouseX - movingObject.getCenter().x;
     const deltaY = mouseY - movingObject.getCenter().y;
+    movingObject.clear();
 
     movingObject.x += deltaX;
     movingObject.y += deltaY;
@@ -83,6 +84,7 @@ export function handleMouseWheel(event) {
     if (object.isPointInPath(mouseX, mouseY) && !(object instanceof LightBeam)) {
       const delta = Math.sign(event.deltaY);
       const angleChange = delta;
+      object.clear();
       object.angle += angleChange;
 
       updateObj();

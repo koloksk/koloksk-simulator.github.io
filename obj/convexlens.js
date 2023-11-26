@@ -14,23 +14,44 @@ class ConvexLens extends Object{
   }
 
   draw() {
-  let maxx = this.x + this.width + this.r2;
-  let minx = this.x - this.r1;
+    this.maxX = this.x + this.width + this.r2;
+    this.minX = this.x - this.r1;
   
   this.ctx.save();
 
   this.object = new Path2D();
   this.object.moveTo(this.x, this.y);
   this.object.lineTo(this.x + this.width, this.y);
-  this.object.quadraticCurveTo(maxx, this.y+this.height/2, this.x+this.width, this.y+this.height)
+  this.object.quadraticCurveTo(this.maxX, this.y+this.height/2, this.x+this.width, this.y+this.height)
   this.object.lineTo(this.x, this.y+this.height);
-  this.object.quadraticCurveTo(minx, this.y+this.height/2, this.x, this.y)
+  this.object.quadraticCurveTo(this.minX, this.y+this.height/2, this.x, this.y)
 
   this.ctx.stroke(this.object);
   this.ctx.restore();
 
   }
-
+  clear() {
+    // Wyczyść obszar, na którym znajduje się obiekt, uwzględniając szerokość stroke
+    const boundingBox = this.calculateBoundingBox();
+    this.ctx.clearRect(
+      boundingBox.x - 2,
+      boundingBox.y - 2,
+      boundingBox.width + 4,
+      boundingBox.height + 4
+    );
+  }
+  calculateBoundingBox() {
+    const minY = this.y;
+    const maxY = this.y + this.height;
+    this.maxX = this.x + this.width + this.r2;
+    this.minX = this.x - this.r1;
+    return {
+      x: this.minX,
+      y: minY,
+      width: this.maxX,
+      height: maxY - minY,
+    };
+  }
   getCenter() {
     const center = {
       x: this.x + this.width / 2,

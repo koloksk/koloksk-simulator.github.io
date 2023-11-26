@@ -46,6 +46,26 @@ class Prism extends Object {
     return center;
 
   }
+  clear() {
+    // Wyczyść obszar, na którym znajduje się obiekt
+    const boundingBox = this.calculateBoundingBox();
+    this.ctx.clearRect(boundingBox.x - 2, boundingBox.y-2, boundingBox.width+4, boundingBox.height+4);
+  }
+  calculateBoundingBox() {
+    const minX = Math.min(this.points.p1.x, this.points.p2.x, this.points.p3.x);
+    const minY = Math.min(this.points.p1.y, this.points.p2.y, this.points.p3.y);
+    const maxX = Math.max(this.points.p1.x, this.points.p2.x, this.points.p3.x);
+    const maxY = Math.max(this.points.p1.y, this.points.p2.y, this.points.p3.y);
+
+    return {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+    };
+  }
+
+
   calculateReflectionAngle(incidentAngle){
     let wspolczynnikZalamania = 1.5;
     // console.log(Math.abs(incidentAngle))

@@ -1,6 +1,5 @@
 class LightBeam {
-    constructor(canvas, x, y, endx, endy, color = "white") {
-        this.canvas = canvas;
+    constructor(x, y, endx, endy, color = "white") {
         this.ctx = document.getElementById("canvas1").getContext("2d");
         this.x = x;
         this.y = y;

@@ -9,29 +9,8 @@ class Mirror extends Object{
   }
 
   draw() {
-    // let midPoint = {
-    //   x: this.x + (this.x2 - this.x) * 0.5,
-    //   y: this.y + (this.y2 - this.y) * 0.5
-    // };
     this.ctx.beginPath();
-    // this.ctx.translate(midPoint.x, midPoint.y);
 
-    // // rotate some angle (radians)
-    // this.ctx.rotate(this.angle * Math.PI / 180);  // = 45°
-    // // translate back
-    // this.ctx.translate(-midPoint.x, -midPoint.y);
-    // const { x, y, x2, y2 } = this.rotatePoints(
-    //   this.x,
-    //   this.y,
-    //   this.x2,
-    //   this.y2,
-    //   this.angle
-    // );
-    // this.x = x;
-    // this.y = y;
-    // this.x2 = x2;
-    // this.y2 = y2;
-    // this.angle = 0;
     this.ctx.save();
     this.object = new Path2D();
     let rotatedPoint = this.rotatePoint(this.x, this.y, this.angle, this.getCenter().x, this.getCenter().y);
@@ -67,7 +46,14 @@ class Mirror extends Object{
     const distance = this.pointToLineDistance(point);
     return distance < fixdistance;
   }
-
+  clear() {
+    this.ctx.clearRect(
+      this.x - 2,
+      this.y - 2,
+      this.x2 + 4,
+      this.y2 + 4
+    );
+  }
   pointToLineDistance(point) {
     const { x: x1, y: y1 } = { x: this.x, y: this.y };
     const { x: x2, y: y2 } = { x: this.x2, y: this.y2 };
