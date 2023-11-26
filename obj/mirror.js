@@ -46,14 +46,22 @@ class Mirror extends Object{
     const distance = this.pointToLineDistance(point);
     return distance < fixdistance;
   }
+
   clear() {
-    this.ctx.clearRect(
-      this.x - 2,
-      this.y - 2,
-      this.x2 + 4,
-      this.y2 + 4
-    );
-  }
+    const margin = 5; // adjust this value as needed
+
+    const rotatedStart = this.rotatePoint(this.x, this.y, this.angle, this.getCenter().x, this.getCenter().y);
+    const rotatedEnd = this.rotatePoint(this.x2, this.y2, this.angle, this.getCenter().x, this.getCenter().y);
+
+    const minX = Math.min(rotatedStart.x, rotatedEnd.x) - margin;
+    const minY = Math.min(rotatedStart.y, rotatedEnd.y) - margin;
+    const width = Math.abs(rotatedEnd.x - rotatedStart.x) + 2 * margin;
+    const height = Math.abs(rotatedEnd.y - rotatedStart.y) + 2 * margin;
+
+    this.ctx.clearRect(minX, minY, width, height);
+}
+
+
   pointToLineDistance(point) {
     const { x: x1, y: y1 } = { x: this.x, y: this.y };
     const { x: x2, y: y2 } = { x: this.x2, y: this.y2 };
