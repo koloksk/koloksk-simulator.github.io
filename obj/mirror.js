@@ -17,7 +17,7 @@ class Mirror extends Object{
     this.object.moveTo(rotatedPoint.x, rotatedPoint.y);
     rotatedPoint = this.rotatePoint(this.x2, this.y2, this.angle, this.getCenter().x, this.getCenter().y);
     this.object.lineTo(rotatedPoint.x, rotatedPoint.y);
-    this.ctx.strokeStyle = "black";
+    this.ctx.strokeStyle = "green";
     this.ctx.stroke(this.object);
     this.ctx.restore();
   }
@@ -75,40 +75,11 @@ class Mirror extends Object{
     return numerator / denominator;
   }
 
-  // getAngle() {
-  //   const deltaX = this.x2 - this.x;
-  //   const deltaY = this.y2 - this.y;
-  //   return Math.atan2(deltaY, deltaX) * (180 / Math.PI);
-  // }
   calculateReflectionAngle(incidentAngle) {
-    // Oblicz kąt padania w radianach
-    const incidentAngleRad = incidentAngle * (Math.PI / 180);
-
-    // Oblicz współczynniki kierunkowe linii lustra
-    const mirrorSlope = (this.y2 - this.y) / (this.x2 - this.x);
-
-    // Oblicz współczynnik kierunkowy prostopadłej do lustra (linii prostopadłej)
-    const perpendicularSlope = -1 / mirrorSlope;
-
-    // Oblicz kąt nachylenia linii prostopadłej
-    const perpendicularAngleRad = Math.atan(perpendicularSlope);
-
-    // Oblicz kąt odbicia korzystając z zasady równości kątów padania i odbicia
-    const reflectionAngleRad = 2 * perpendicularAngleRad - incidentAngleRad;
-
-    // Przekształć kąt odbicia z radianów na stopnie
-    const reflectionAngle = reflectionAngleRad * (180 / Math.PI);
+    const normalAngle = this.angle + Math.PI / 2;
+    const reflectionAngle = 2 * incidentAngle - normalAngle;
 
     return reflectionAngle;
-  }
-
-  isPointOnRightSide(x, y) {
-    // Oblicz wartość funkcji liniowej opisującej lusterko w punkcie światła
-    const mirrorFunctionValue =
-      (this.y2 - this.y) * (x - this.x) - (this.x2 - this.x) * (y - this.y);
-
-    // Sprawdź, po której stronie lustra znajduje się punkt światła
-    return mirrorFunctionValue > 0;
   }
 
   getSettings() {

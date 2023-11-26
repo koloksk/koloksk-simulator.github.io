@@ -41,12 +41,11 @@ function addConvexLens() {
   objects.push(convexLens);
 }
 function addMirror() {
-  const mirror = new Mirror(60, 60, 100, 100);
+  const mirror = new Mirror(60, 60, 100, 60);
   objects.push(mirror);
 }
 function addLight() {
   const light = new Light(canvas.width/2, canvas.height/2, 20);
-  drawLightBeam(light.x, light.y, light.angle);
   objects.push(light);
 }
 function addPrism() {
@@ -64,7 +63,7 @@ function isPointOnCanvasEdge(x, y) {
   );
 }
 
-async function drawLightBeam(startX, startY, angle, color) {
+export function drawLightBeam(startX, startY, angle, color) {
   let x = startX;
   let y = startY;
   let length = 1;
@@ -88,8 +87,8 @@ async function drawLightBeam(startX, startY, angle, color) {
         if (object instanceof Mirror) {
           const reflectionAngle =
             object.calculateReflectionAngle(
-              line.calculateIncidentAngle(object)
-            ) + 180;
+              line.getAngle()
+              );
 
           angle = reflectionAngle;
         }
@@ -127,18 +126,21 @@ canvas1.addEventListener("mouseup", moveController.handleMouseUp);
 canvas1.addEventListener("mousemove", moveController.handleMouseMove);
 canvas1.addEventListener("wheel", moveController.handleMouseWheel);
 
-export function update() {
-  ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+// export function update() {
+//   ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
 
-  for (let i = objects.length - 1; i >= 0; i--) {
-     const object = objects[i];
-     if (object instanceof Light)
-     drawLightBeam(object.x, object.y, object.angle);
-  }
-  requestAnimationFrame(update);
- }
+//   for (let i = objects.length - 1; i >= 0; i--) {
+//      const object = objects[i];
+//      if (object instanceof Light)
+//      drawLightBeam(object.x, object.y, object.angle);
+//   }
+//   requestAnimationFrame(update);
+//  }
 
  export function updateObj() {
+    let ctx1 = document.getElementById("canvas1").getContext("2d");
+    ctx1.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  
   for (let i = objects.length - 1; i >= 0; i--) {
     const object = objects[i];
     //ctx.clearRect(object.x, object.y, object.width, object.height);
@@ -146,4 +148,4 @@ export function update() {
   }
  }
 
-update();
+//update();

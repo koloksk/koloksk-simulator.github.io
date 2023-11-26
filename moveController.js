@@ -1,4 +1,4 @@
-import { objects, update, updateObj } from "./core.js";
+import { objects, updateObj } from "./core.js";
 import LightBeam from "./obj/lightbeam.js";
 
 export let isDragging = false;
@@ -45,7 +45,10 @@ export function createSettingsElements(obj, properties, type) {
     input.type = type;
     input.value = obj[property];
     input.addEventListener("input", (event) => {
+      obj.clear();
+
       obj[property] = Number(event.target.value);
+      
       updateObj();
     });
     settings.appendChild(label);

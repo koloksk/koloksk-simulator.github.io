@@ -1,4 +1,5 @@
 import Object from "./object.js";
+import {drawLightBeam} from "../core.js";
 
 class Light extends Object{
     constructor(x, y, radius, angle, object, ctx) {
@@ -19,7 +20,7 @@ class Light extends Object{
         this.ctx.fill(this.object);
         //this.ctx.stroke(this.object);
         this.ctx.restore();
-
+        drawLightBeam(this.x, this.y, this.angle);
       }
       getCenter(){
         const center = {
