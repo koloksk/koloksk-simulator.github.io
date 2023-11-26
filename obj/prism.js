@@ -52,10 +52,14 @@ class Prism extends Object {
     this.ctx.clearRect(boundingBox.x - 2, boundingBox.y-2, boundingBox.width+4, boundingBox.height+4);
   }
   calculateBoundingBox() {
-    const minX = Math.min(this.points.p1.x, this.points.p2.x, this.points.p3.x);
-    const minY = Math.min(this.points.p1.y, this.points.p2.y, this.points.p3.y);
-    const maxX = Math.max(this.points.p1.x, this.points.p2.x, this.points.p3.x);
-    const maxY = Math.max(this.points.p1.y, this.points.p2.y, this.points.p3.y);
+    let rotatedPoint = this.rotatePoint(this.points.p1.x, this.points.p1.y, this.angle, this.getCenter().x, this.getCenter().y);
+    let rotatedPoint2 = this.rotatePoint(this.points.p2.x, this.points.p2.y, this.angle, this.getCenter().x, this.getCenter().y);
+    let rotatedPoint3 = this.rotatePoint(this.points.p3.x, this.points.p3.y, this.angle, this.getCenter().x, this.getCenter().y);
+
+    const minX = Math.min(rotatedPoint.x, rotatedPoint2.x, rotatedPoint3.x);
+    const minY = Math.min(rotatedPoint.y, rotatedPoint2.y, rotatedPoint3.y);
+    const maxX = Math.max(rotatedPoint.x, rotatedPoint2.x, rotatedPoint3.x);
+    const maxY = Math.max(rotatedPoint.y, rotatedPoint2.y, rotatedPoint3.y);
 
     return {
       x: minX,
