@@ -1,0 +1,48 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: darkslategray;
+  overflow: hidden;
+}
+canvas{
+  position: absolute;
+}
+#canvas1{
+  z-index: 10;
+}
+#grid{
+  z-index: -2;
+}
+#object-list {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  bottom: 5%;
+  z-index: 100;
+  width: 96%;
+  height: 10%;
+  margin-inline: 2%;
+  background-color: #00000070;
+  color: white;
+  border-radius: 25px;
+}
+#settings {
+  position: absolute;
+  display: none;
+  align-items: center;
+  bottom: 15%;
+  z-index: 100;
+  width: 96%;
+  height: 5%;
+  margin-inline: 2%;
+  background-color: #00000070;
+  color: white;
+  border-radius: 25px;
+}
+.object {
+  display: inline-block;
+  cursor: pointer;
+  margin: 0 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
