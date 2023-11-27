@@ -1,6 +1,8 @@
+import {ctx1} from "../core.js";
+
 class LightBeam {
     constructor(x, y, endx, endy, color = "white") {
-        this.ctx = document.getElementById("canvas1").getContext("2d");
+        this.ctx = ctx1;
         this.x = x;
         this.y = y;
         this.endx = endx;

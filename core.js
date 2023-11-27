@@ -17,13 +17,13 @@ const rainbowColors = [
 ];
 export var objects = [];
 const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+export const ctx = canvas.getContext("2d", {willReadFrequently: true});
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const canvas1 = document.getElementById("canvas1");
-const ctx1 = canvas1.getContext("2d");
+export const ctx1 = canvas1.getContext("2d", {willReadFrequently: true});
 
 canvas1.width = window.innerWidth;
 canvas1.height = window.innerHeight;
@@ -64,6 +64,9 @@ function isPointOnCanvasEdge(x, y) {
 }
 
 export function drawLightBeam(startX, startY, angle, color) {
+
+  //TODO:
+  //- make line to the canvas end nd check if intersect with obiect instead of isPointInStroke()
   let x = startX;
   let y = startY;
   let length = 1;
@@ -94,7 +97,7 @@ export function drawLightBeam(startX, startY, angle, color) {
         }
         if (object instanceof ConvexLens) {
           const reflectionAngle = object.calculateReflectionAngle(
-            line.calculateIncidentAngle(object)
+            line.getAngle()
           );
           angle = reflectionAngle;
         }
@@ -115,7 +118,7 @@ export function drawLightBeam(startX, startY, angle, color) {
         y = endY + Math.sin((angle * Math.PI) / 180) * length;
       }
     }
-    length++;
+    length+=2;
   }
   line = new LightBeam(x, y, endX, endY, color);
 }

@@ -17,6 +17,8 @@ class Mirror extends Object{
     this.object.moveTo(rotatedPoint.x, rotatedPoint.y);
     rotatedPoint = this.rotatePoint(this.x2, this.y2, this.angle, this.getCenter().x, this.getCenter().y);
     this.object.lineTo(rotatedPoint.x, rotatedPoint.y);
+    this.ctx.lineWidth = 5;
+
     this.ctx.strokeStyle = "green";
     this.ctx.stroke(this.object);
     this.ctx.restore();

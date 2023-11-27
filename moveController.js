@@ -1,11 +1,10 @@
 import { objects, updateObj } from "./core.js";
 import LightBeam from "./obj/lightbeam.js";
+import { openSettings, settings } from "./settingsController.js";
 
 export let isDragging = false;
 export let movingObject = null;
 export let lastSelected = null;
-
-export const settings = document.getElementById("settings");
 
 function calculateMouseCoordinates(event) {
   return {
@@ -20,40 +19,13 @@ export function handleMouseDown(event) {
   settings.innerHTML = "";
   settings.style.display = "none";
 
-  for (const object of objects) {
-    if (object.isPointInPath(mouseX, mouseY)) {
-      movingObject = object;
-      lastSelected = object;
-      openSettings(object);
-      settings.style.display = "flex";
-    }
+  const clickedObject = objects.find((object) => object.isPointInPath(mouseX, mouseY));
+  if (clickedObject) {
+    movingObject = clickedObject;
+    lastSelected = clickedObject;
+    openSettings(clickedObject);
+    settings.style.display = "flex";
   }
-}
-
-export function openSettings(object) {
-  settings.innerHTML = "";
-  object.getSettings().forEach((property) => {
-    createSettingsElements(object, [property], "number");
-  });
-}
-
-export function createSettingsElements(obj, properties, type) {
-  properties.forEach((property) => {
-    const label = document.createElement("label");
-    label.textContent = property;
-    const input = document.createElement("input");
-    input.type = type;
-    input.value = obj[property];
-    input.addEventListener("input", (event) => {
-      obj.clear();
-
-      obj[property] = Number(event.target.value);
-      
-      updateObj();
-    });
-    settings.appendChild(label);
-    settings.appendChild(input);
-  });
 }
 
 export function handleMouseUp() {
@@ -82,9 +54,12 @@ export function handleMouseMove(event) {
 
 export function handleMouseWheel(event) {
   const { x: mouseX, y: mouseY } = calculateMouseCoordinates(event);
+  const object = objects.find((object) => object.isPointInPath(mouseX, mouseY));
 
-  for (const object of objects) {
-    if (object.isPointInPath(mouseX, mouseY) && !(object instanceof LightBeam)) {
+    if (
+      object &&
+      !(object instanceof LightBeam)
+    ) {
       const delta = Math.sign(event.deltaY);
       const angleChange = delta;
       object.clear();
@@ -93,7 +68,7 @@ export function handleMouseWheel(event) {
       updateObj();
       openSettings(object);
     }
-  }
+  
 
   event.preventDefault();
 }
