@@ -78,10 +78,13 @@ class Mirror extends Object{
   }
 
   calculateReflectionAngle(incidentAngle) {
-    const normalAngle = this.angle + Math.PI / 2;
-    const reflectionAngle = 2 * incidentAngle - normalAngle;
-
-    return reflectionAngle;
+    const incidentAngleRad = (incidentAngle * Math.PI) / 180;
+    const mirrorAngleRad = (this.angle * Math.PI) / 180;
+    const reflectAngleRad = 2 * mirrorAngleRad - incidentAngleRad;
+  
+    const reflectAngleDeg = (reflectAngleRad * 180) / Math.PI;
+  
+    return reflectAngleDeg;
   }
 
   getSettings() {

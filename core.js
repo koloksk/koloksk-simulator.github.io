@@ -118,7 +118,7 @@ export function drawLightBeam(startX, startY, angle, color) {
         y = endY + Math.sin((angle * Math.PI) / 180) * length;
       }
     }
-    length+=2;
+    length++;
   }
   line = new LightBeam(x, y, endX, endY, color);
 }
