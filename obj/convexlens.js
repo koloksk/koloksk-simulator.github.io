@@ -1,37 +1,43 @@
 import Object from "./object.js";
 
-class ConvexLens extends Object{
+class ConvexLens extends Object {
   constructor(x, y, r1, r2, focalLength, angle, ctx, object) {
-    super(x,y,angle, object, ctx)
+    super(x, y, angle, object, ctx);
     this.r1 = r1;
     this.r2 = r2;
     this.width = 100;
     this.height = 100;
 
     this.focalLength = focalLength;
-
+    this.maxX = this.x + this.width + this.r2;
+    this.minX = this.x - this.r1;
     this.draw();
   }
 
   draw() {
-    this.maxX = this.x + this.width + this.r2;
-    this.minX = this.x - this.r1;
-  
-  this.ctx.save();
+    this.ctx.save();
 
-  this.object = new Path2D();
-  this.object.moveTo(this.x, this.y);
-  this.object.lineTo(this.x + this.width, this.y);
-  this.object.quadraticCurveTo(this.maxX, this.y+this.height/2, this.x+this.width, this.y+this.height)
-  this.object.lineTo(this.x, this.y+this.height);
-  this.object.quadraticCurveTo(this.minX, this.y+this.height/2, this.x, this.y)
+    this.object = new Path2D();
+    this.object.moveTo(this.x, this.y);
+    this.object.lineTo(this.x + this.width, this.y);
+    this.object.quadraticCurveTo(
+      this.maxX,
+      this.y + this.height / 2,
+      this.x + this.width,
+      this.y + this.height
+    );
+    this.object.lineTo(this.x, this.y + this.height);
+    this.object.quadraticCurveTo(
+      this.minX,
+      this.y + this.height / 2,
+      this.x,
+      this.y
+    );
 
-  this.ctx.stroke(this.object);
-  this.ctx.restore();
-
+    this.ctx.stroke(this.object);
+    this.ctx.restore();
   }
   clear() {
-    // Wyczyść obszar, na którym znajduje się obiekt, uwzględniając szerokość stroke
     const boundingBox = this.calculateBoundingBox();
     this.ctx.clearRect(
       boundingBox.x - 2,
@@ -52,6 +58,22 @@ class ConvexLens extends Object{
       height: maxY - minY,
     };
   }
+//TODO: Implement
+  isPointInStroke(x, y, x2, y2) {
+    console.log(x, y, x2, y2);
+    return this.findIntersectionPoint(
+      x,
+      y,
+      x2,
+      y2,
+      this.x + this.width,
+      this.y,
+      this.maxX,
+      this.y + this.height / 2,
+      this.x + this.width,
+      this.y + this.height
+    );
+  }
   getCenter() {
     const center = {
       x: this.x + this.width / 2,
@@ -69,9 +91,7 @@ class ConvexLens extends Object{
     const r = this.r1;
 
     // Odległość od punktu dotknięcia wiązki światła do środka soczewki
-    const d = Math.abs(
-      this.y - this.r1 - Math.tan(incidentAngleRad) * this.x
-    );
+    const d = Math.abs(this.y - this.r1 - Math.tan(incidentAngleRad) * this.x);
 
     // Promień krzywizny soczewki (dla soczewki wypukłej jest dodatni)
     const f = r;
@@ -96,7 +116,7 @@ class ConvexLens extends Object{
     return reflectionAngle;
   }
   getSettings() {
-    return ["x", "y", "width", "height","r1", "r2", "angle"]
+    return ["x", "y", "width", "height", "r1", "r2", "angle"];
   }
 }
 

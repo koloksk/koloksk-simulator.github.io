@@ -19,7 +19,9 @@ export function handleMouseDown(event) {
   settings.innerHTML = "";
   settings.style.display = "none";
 
-  const clickedObject = objects.find((object) => object.isPointInPath(mouseX, mouseY));
+  const clickedObject = objects.find((object) =>
+    object.isPointInPath(mouseX, mouseY)
+  );
   if (clickedObject) {
     movingObject = clickedObject;
     lastSelected = clickedObject;
@@ -56,19 +58,15 @@ export function handleMouseWheel(event) {
   const { x: mouseX, y: mouseY } = calculateMouseCoordinates(event);
   const object = objects.find((object) => object.isPointInPath(mouseX, mouseY));
 
-    if (
-      object &&
-      !(object instanceof LightBeam)
-    ) {
-      const delta = Math.sign(event.deltaY);
-      const angleChange = delta;
-      object.clear();
-      object.angle += angleChange;
-
-      updateObj();
-      openSettings(object);
-    }
+  if (!object || object instanceof LightBeam) return;
   
+  const delta = Math.sign(event.deltaY);
+  const angleChange = delta;
+  object.clear();
+  object.angle += angleChange;
+  openSettings(object);
+
+  updateObj();
 
   event.preventDefault();
 }

@@ -20,6 +20,7 @@ class Light extends Object{
         this.ctx.fill(this.object);
         //this.ctx.stroke(this.object);
         this.ctx.restore();
+        console.log("draw")
         drawLightBeam(this.x, this.y, this.angle);
       }
       getCenter(){
@@ -32,7 +33,6 @@ class Light extends Object{
       }
 
       clear() {
-        // Wyczyść obszar, na którym znajduje się obiekt
         this.ctx.clearRect(this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
       }
 

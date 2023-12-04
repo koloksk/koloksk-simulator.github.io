@@ -68,7 +68,32 @@ class Prism extends Object {
       height: maxY - minY,
     };
   }
+  isPointInStroke(x3, y3, x4, y4) {
+    const lines = [
+        [this.points.p1.x, this.points.p1.y, this.points.p2.x, this.points.p2.y],
+        [this.points.p2.x, this.points.p2.y, this.points.p3.x, this.points.p3.y],
+        [this.points.p3.x, this.points.p3.y, this.points.p1.x, this.points.p1.y]
+    ];
 
+    let closestIntersection = null;
+    let closestDistance = Infinity;
+
+    for (const line of lines) {
+        const intersection = this.line_intersect(...line, x3, y3, x4, y4);
+
+        if (intersection) {
+            const distance = this.distanceBetweenPoints(intersection, { x: x3, y: y3 });
+
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestIntersection = intersection;
+            }
+        }
+    }
+
+    return closestIntersection;
+}
+  
 
   calculateReflectionAngle(incidentAngle){
     let wspolczynnikZalamania = 1.5;

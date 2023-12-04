@@ -50,7 +50,7 @@ class Mirror extends Object{
   }
 
   clear() {
-    const margin = 5; // adjust this value as needed
+    const margin = 5;
 
     const rotatedStart = this.rotatePoint(this.x, this.y, this.angle, this.getCenter().x, this.getCenter().y);
     const rotatedEnd = this.rotatePoint(this.x2, this.y2, this.angle, this.getCenter().x, this.getCenter().y);
@@ -76,6 +76,13 @@ class Mirror extends Object{
 
     return numerator / denominator;
   }
+
+  isPointInStroke(x3, y3, x4, y4){
+    const rotatedStart = this.rotatePoint(this.x, this.y, this.angle, this.getCenter().x, this.getCenter().y);
+    const rotatedEnd = this.rotatePoint(this.x2, this.y2, this.angle, this.getCenter().x, this.getCenter().y);
+    return this.line_intersect(rotatedStart.x, rotatedStart.y, rotatedEnd.x, rotatedEnd.y, x3, y3, x4, y4)
+  }
+
 
   calculateReflectionAngle(incidentAngle) {
     const incidentAngleRad = (incidentAngle * Math.PI) / 180;

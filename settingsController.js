@@ -49,6 +49,4 @@ export function createSettingsElements(obj, properties, type) {
       updateObj();
     }
   }
-
-  // Add additional conditions for other nested properties as needed.
 }
