@@ -1,11 +1,12 @@
-import Object from "./object.js";
 import {drawLightBeam} from "../core.js";
+import Light from "./light.js";
 
-class Light extends Object{
+class RadialLight extends Light{
     constructor(x, y, radius, angle, object, ctx) {
         super(x,y,angle, object, ctx)
         this.radius = radius;
         this.opacity = 1;
+        this.beams = 10; 
         this.draw();
       }
   
@@ -18,26 +19,14 @@ class Light extends Object{
         this.ctx.fill(this.object);
         //this.ctx.stroke(this.object);
         this.ctx.restore();
-        console.log("draw")
-        drawLightBeam(this.x, this.y, this.angle, "white",this.opacity);
+        for(var i = 0; i < this.beams; i++){
+          drawLightBeam(this.x, this.y, (360 / this.beams * i)+this.angle, "white",this.opacity);
+        }
       }
-      getCenter(){
-        const center = {
-          x: this.x,
-          y: this.y,
-        };
-    
-        return center;
-      }
-
-      clear() {
-        this.ctx.clearRect(this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
-      }
-
       
       getSettings() {
-        return ["x", "y", "angle", "opacity"]
+        return ["x", "y", "angle","opacity", "beams"]
       }
 }
 
-export default Light;
+export default RadialLight;

@@ -3,6 +3,8 @@ import Light from "./obj/light.js";
 import LightBeam from "./obj/lightbeam.js";
 import ConvexLens from "./obj/convexlens.js";
 import Prism from "./obj/prism.js";
+import RadialLight from "./obj/radialLight.js";
+import Grid from "./obj/grid.js";
 
 import * as moveController from "./moveController.js";
 
@@ -25,6 +27,10 @@ canvas.height = window.innerHeight;
 const canvas1 = document.getElementById("canvas1");
 export const ctx1 = canvas1.getContext("2d", { willReadFrequently: true });
 
+const cgrid = document.getElementById("grid");
+cgrid.width = window.innerWidth;
+cgrid.height = window.innerHeight;
+
 canvas1.width = window.innerWidth;
 canvas1.height = window.innerHeight;
 
@@ -35,6 +41,8 @@ document.getElementById("1").addEventListener("click", addLight);
 document.getElementById("2").addEventListener("click", addMirror);
 document.getElementById("3").addEventListener("click", addConvexLens);
 document.getElementById("4").addEventListener("click", addPrism);
+document.getElementById("5").addEventListener("click", addRadialLight);
+export const grid = new Grid(20);;
 
 function addConvexLens() {
   const convexLens = new ConvexLens(200, 200, 30, -20, 30);
@@ -52,23 +60,22 @@ function addPrism() {
   const prism = new Prism(canvas.width / 2, canvas.height / 2);
   objects.push(prism);
 }
-
-function getMaxLineLength(x, y, kat) {
-  // Zamień kąt na radiany
-  var katWRad = kat * (Math.PI / 180);
-
-  // Oblicz współrzędne końcowe
-  var endX = canvas1.width * Math.cos(katWRad);
-  var endY = canvas1.height * Math.sin(katWRad);
-
-  // Oblicz odległość między punktem a końcem canvas
-  var distance = Math.sqrt(
-    Math.pow(endX - x, 2) + Math.pow(endY - y, 2)
-  );
-
-  return distance;
+function addRadialLight() {
+  const radialLight = new RadialLight(0, 0, 20);
+  objects.push(radialLight);
 }
-export function drawLightBeam(startX, startY, angle, color) {
+function getMaxLineLength(x, y, angle) {
+  let angleInRadians = angle * Math.PI / 180;
+
+  let intersectionX = x + canvas.width * 1.5 * Math.cos(angleInRadians);
+  let intersectionY = y + canvas.height * 1.5 * Math.sin(angleInRadians);
+
+  let lineLength = Math.sqrt(Math.pow(intersectionX - x, 2) + Math.pow(intersectionY - y, 2));
+
+  return lineLength;
+
+}
+export function drawLightBeam(startX, startY, angle, color, opacity) {
   let line;
   const lineLength = getMaxLineLength(startX, startY, angle);
   
@@ -99,7 +106,7 @@ export function drawLightBeam(startX, startY, angle, color) {
   
   while (hitObj != null) {
     let intersect = hitObj.isPointInStroke(startX, startY, endX, endY);
-    line = new LightBeam(startX, startY, intersect.x, intersect.y, color); //jest udezenie, robi linie do uderzonego obiektu
+    line = new LightBeam(startX, startY, intersect.x, intersect.y, color, opacity); //jest udezenie, robi linie do uderzonego obiektu
 
     if (
       hitObj instanceof Mirror ||
@@ -153,13 +160,14 @@ export function drawLightBeam(startX, startY, angle, color) {
 
     angle = reflectionAngle;
 
-    if (color == null) {
+    if (color == null || color == "white") {
       for (let j = 0; j < 7; j++) {
         drawLightBeam(
           startX,
           startY,
           hitObj.calculateReflectionAngle(line.getAngle()) + j / 10,
-          rainbowColors[j]
+          rainbowColors[j],
+          opacity
         );
       }
     } else {
@@ -167,11 +175,12 @@ export function drawLightBeam(startX, startY, angle, color) {
         startX,
         startY,
         hitObj.calculateReflectionAngle(line.getAngle()),
-        color
+        color,
+        opacity
       );
     }
   } else {
-    line = new LightBeam(startX, startY, endX, endY, color);
+    line = new LightBeam(startX, startY, endX, endY, color, opacity);
   }
 }
 
@@ -253,14 +262,23 @@ canvas1.addEventListener("wheel", moveController.handleMouseWheel);
 //  }
 
 export function updateObj() {
-  let ctx1 = document.getElementById("canvas1").getContext("2d");
-  ctx1.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  clear(ctx1); // clear light canvas
+  clear(ctx); // clear light canvas
+
 
   for (let i = objects.length - 1; i >= 0; i--) {
     const object = objects[i];
     //ctx.clearRect(object.x, object.y, object.width, object.height);
     object.draw();
   }
+}
+
+
+function clear(ctx){
+  ctx.save();
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.clearRect(0,0,ctx1.canvas.width,ctx1.canvas.height);
+  ctx.restore();
 }
 
 //update();
