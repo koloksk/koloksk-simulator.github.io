@@ -1,10 +1,10 @@
 import Object from "./object.js";
 
 class Mirror extends Object{
-  constructor(x, y, x2, y2, angle, object, ctx) {
-    super(x,y,angle, object, ctx)
-    this.x2 = x2;
-    this.y2 = y2;
+  constructor(position, length, angle, object, ctx) {
+    super(position,angle, object, ctx)
+    this.length = length;
+    this.points = {p1: {x: position.x - length / 2, y: position.y}, p2: {x: position.x + length / 2, y: position.y}};
     this.draw();
   }
 
@@ -13,9 +13,10 @@ class Mirror extends Object{
 
     this.ctx.save();
     this.object = new Path2D();
-    let rotatedPoint = this.rotatePoint(this.x, this.y, this.angle, this.getCenter().x, this.getCenter().y);
+    let rotatedPoint = this.rotatePoint(this.points.p1.x, this.points.p1.y, this.angle, this.getCenter().x, this.getCenter().y);
+    //console.log(this.points)
     this.object.moveTo(rotatedPoint.x, rotatedPoint.y);
-    rotatedPoint = this.rotatePoint(this.x2, this.y2, this.angle, this.getCenter().x, this.getCenter().y);
+    rotatedPoint = this.rotatePoint(this.points.p2.x, this.points.p2.y, this.angle, this.getCenter().x, this.getCenter().y);
     this.object.lineTo(rotatedPoint.x, rotatedPoint.y);
     this.ctx.lineWidth = 5;
 
@@ -26,8 +27,8 @@ class Mirror extends Object{
 
   getCenter() {
     const center = {
-      x: (this.x + this.x2) / 2,
-      y: (this.y + this.y2) / 2,
+      x: this.position.x,
+      y: this.position.y
     };
     return center;
   }
@@ -52,8 +53,8 @@ class Mirror extends Object{
   clear() {
     const margin = 5;
 
-    const rotatedStart = this.rotatePoint(this.x, this.y, this.angle, this.getCenter().x, this.getCenter().y);
-    const rotatedEnd = this.rotatePoint(this.x2, this.y2, this.angle, this.getCenter().x, this.getCenter().y);
+    const rotatedStart = this.rotatePoint(this.points.p1.x, this.points.p1.y, this.angle, this.getCenter().x, this.getCenter().y);
+    const rotatedEnd = this.rotatePoint(this.points.p2.x, this.points.p2.y, this.angle, this.getCenter().x, this.getCenter().y);
 
     const minX = Math.min(rotatedStart.x, rotatedEnd.x) - margin;
     const minY = Math.min(rotatedStart.y, rotatedEnd.y) - margin;
@@ -78,8 +79,8 @@ class Mirror extends Object{
   }
 
   isPointInStroke(x3, y3, x4, y4){
-    const rotatedStart = this.rotatePoint(this.x, this.y, this.angle, this.getCenter().x, this.getCenter().y);
-    const rotatedEnd = this.rotatePoint(this.x2, this.y2, this.angle, this.getCenter().x, this.getCenter().y);
+    const rotatedStart = this.rotatePoint(this.points.p1.x, this.points.p1.y, this.angle, this.getCenter().x, this.getCenter().y);
+    const rotatedEnd = this.rotatePoint(this.points.p2.x, this.points.p2.y, this.angle, this.getCenter().x, this.getCenter().y);
     return this.line_intersect(rotatedStart.x, rotatedStart.y, rotatedEnd.x, rotatedEnd.y, x3, y3, x4, y4)
   }
 

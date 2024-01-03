@@ -1,4 +1,4 @@
-import { updateObj } from "./core.js";
+import { ws } from "../app.js";
 
 export const settings = document.getElementById("settings");
 
@@ -7,6 +7,7 @@ export function openSettings(object) {
   object.getSettings().forEach((property) => {
     createSettingsElements(object, property.split('.'), "number");
   });
+  settings.style.display = "flex";
 }
 
 export function createSettingsElements(obj, properties, type) {
@@ -20,7 +21,7 @@ export function createSettingsElements(obj, properties, type) {
     input.addEventListener("input", (event) => {
       obj.clear();
       obj[properties[0]] = type === "number" ? Number(event.target.value) : event.target.value;
-      updateObj();
+      ws.updateObjects();
     });
 
     settings.appendChild(label);

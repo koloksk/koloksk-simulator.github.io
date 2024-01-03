@@ -26,6 +26,10 @@ canvas{
   color: white;
   border-radius: 25px;
 }
+h2 {
+  position: absolute;
+  color: yellow;
+}
 #settings {
   position: absolute;
   display: none;

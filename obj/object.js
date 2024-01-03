@@ -1,12 +1,11 @@
-import { ctx } from "../core.js";
+import { ws } from "../app.js";
 class Object {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
+  constructor(position) {
+    this.position = position;
     this.angle = 0;
     this.object = new Path2D();
-    this.points = { p1: { x: x, y: y } };
-    this.ctx = ctx;
+    this.points = { p1: { x: position.x, y: position.y } };
+    this.ctx = ws.ctx;
   }
 
   isPointInPath(x, y) {
@@ -47,56 +46,111 @@ class Object {
   }
 //TODO: Implement
 
-  findIntersectionPoint(x1, y1, x2, y2, cx1, cy1, cx2, cy2, cx3, cy3) {
-    const epsilon = 1e-6; // Dokładność obliczeń
+  findIntersectionPoint(a1, a2, p1, p2, p3) {
+      var intersections=[];
+      this.ctx.save();
+      this.object = new Path2D();
+      this.object.moveTo(p1.x, p1.y);
+      this.object.arc(p1.x, p1.y, 3,0, 360);
+      this.ctx.fillStyle = `red`;
+      this.ctx.fill(this.object);
 
-    // Parametryczna reprezentacja odcinka
-    const line = (t) => ({
-        x: x1 + t * (x2 - x1),
-        y: y1 + t * (y2 - y1)
-    });
+      this.object = new Path2D();
+      this.object.moveTo(p2.x, p2.y);
+      this.object.arc(p2.x, p2.y, 3,0, 360);
+      this.ctx.fillStyle = `red`;
+      this.ctx.fill(this.object);
 
-    // Parametryczna reprezentacja krzywej kwadratowej
-    const quadraticCurve = (t) => ({
-        x: Math.pow(1 - t, 2) * cx1 + 2 * (1 - t) * t * cx2 + t * t * cx3,
-        y: Math.pow(1 - t, 2) * cy1 + 2 * (1 - t) * t * cy2 + t * t * cy3
-    });
+      this.object = new Path2D();
+      this.object.moveTo(p3.x, p3.y);
+      this.object.arc(p3.x, p3.y, 3,0, 360);
+      this.ctx.fillStyle = `red`;
+      this.ctx.fill(this.object);
 
-    // Algorytm znajdujący punkt przecięcia
-    const iterate = (t0, t1) => {
-        let p0 = line(t0);
-        let p1 = line(t1);
-        let mid = (t0 + t1) / 2;
-        let pm = line(mid);
+      this.object = new Path2D();
+      this.object.moveTo(a1.x, a1.y);
+      this.object.arc(a1.x, a1.y, 15,0, 360);
+      this.ctx.fillStyle = `blue`;
+      this.ctx.fill(this.object);
 
-        let q0 = quadraticCurve(t0);
-        let q1 = quadraticCurve(t1);
-        let qm = quadraticCurve(mid);
-
-        if (Math.abs(p1.x - p0.x) < epsilon && Math.abs(p1.y - p0.y) < epsilon) {
-            return pm;
+      this.object = new Path2D();
+      this.object.moveTo(a2.x, a2.y);
+      this.object.arc(a2.x, a2.y, 15,0, 360);
+      this.ctx.fillStyle = `blue`;
+      this.ctx.fill(this.object);
+      //this.ctx.stroke(this.object);
+      this.ctx.restore();
+      // inverse line normal
+      var normal={
+        x: a1.y-a2.y,
+        y: a2.x-a1.x,
+      }
+    
+      // Q-coefficients
+      var c2={
+        x: p1.x + p2.x*-2 + p3.x,
+        y: p1.y + p2.y*-2 + p3.y
+      }
+    
+      var c1={
+        x: p1.x*-2 + p2.x*2,
+        y: p1.y*-2 + p2.y*2,
+      }
+    
+      var c0={
+        x: p1.x,
+        y: p1.y
+      }
+    
+      // Transform to line 
+      var coefficient=a1.x*a2.y-a2.x*a1.y;
+      var a=normal.x*c2.x + normal.y*c2.y;
+      var b=(normal.x*c1.x + normal.y*c1.y)/a;
+      var c=(normal.x*c0.x + normal.y*c0.y + coefficient)/a;
+    
+      // solve the roots
+      var roots=[];
+      let d=b*b-4*c;
+      if(d>0){
+        var e=Math.sqrt(d);
+        roots.push((-b+Math.sqrt(d))/2);
+        roots.push((-b-Math.sqrt(d))/2);
+      }else if(d==0){
+        roots.push(-b/2);
+      }
+    
+      // calc the solution points
+      for(var i=0;i<roots.length;i++){
+        var minX=Math.min(a1.x,a2.x);
+        var minY=Math.min(a1.y,a2.y);
+        var maxX=Math.max(a1.x,a2.x);
+        var maxY=Math.max(a1.y,a2.y);
+        var t = roots[i];
+        if (t>=0 && t<=1) {
+          // possible point -- pending bounds check
+          var point={
+            x:this.lerp(this.lerp(p1.x,p2.x,t),this.lerp(p2.x,p3.x,t),t),
+            y:this.lerp(this.lerp(p1.y,p2.y,t),this.lerp(p2.y,p3.y,t),t)
+          }
+          var x=point.x;
+          var y=point.y;
+          // bounds checks
+          if(a1.x==a2.x && y>=minY && y<=maxY){  
+            // vertical line
+            intersections.push(point);
+          }else if(a1.y==a2.y && x>=minX && x<=maxX){
+            // horizontal line
+            intersections.push(point);
+          }else if(x>=minX && y>=minY && x<=maxX && y<=maxY){
+            // line passed bounds check
+            intersections.push(point);
+          }
         }
-
-        if ((p1.x - p0.x) * (qm.y - p0.y) - (qm.x - p0.x) * (p1.y - p0.y) > 0) {
-            return iterate(mid, t1);
-        } else {
-            return iterate(t0, mid);
-        }
-    };
-
-    // Sprawdzenie czy punkt przecięcia istnieje
-    if (
-        (x1 < Math.min(cx1, cx2, cx3) && x2 < Math.min(cx1, cx2, cx3)) ||
-        (x1 > Math.max(cx1, cx2, cx3) && x2 > Math.max(cx1, cx2, cx3)) ||
-        (y1 < Math.min(cy1, cy2, cy3) && y2 < Math.min(cy1, cy2, cy3)) ||
-        (y1 > Math.max(cy1, cy2, cy3) && y2 > Math.max(cy1, cy2, cy3))
-    ) {
-        return null; // Odcinek i krzywa nie mają punktu przecięcia
-    }
-
-    return iterate(0, 1);
+      }
+      return intersections;
+    
 }
-
+  lerp=function(a,b,x){ return(a+x*(b-a)); };
 
   distanceBetweenPoints(point1, point2) {
     return Math.sqrt(

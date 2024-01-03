@@ -1,8 +1,8 @@
 import Object from "./object.js";
 
 class Prism extends Object {
-  constructor(x, y, angle, ctx, object, points) {
-    super(x, y, angle, object, ctx, points);
+  constructor(position, angle, ctx, object, points) {
+    super(position, angle, object, ctx, points);
     this.sideLength = 100; // długość boku trójkąta
     this.height = (Math.sqrt(3) / 2) * this.sideLength; // wysokość trójkąta
 
@@ -10,6 +10,10 @@ class Prism extends Object {
   }
 
   draw() {
+    this.points["p1"] = {
+      x: this.position.x,
+      y: this.position.y,
+    };
     this.points["p2"] = {
       x: this.points.p1.x - this.sideLength / 2,
       y: this.points.p1.y + this.height,

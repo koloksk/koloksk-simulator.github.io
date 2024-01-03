@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h4>Calculate intersections of QBez-Curve and Line</h4>
+<canvas id="canvas" width=2000 height=1000></canvas>
+<script>
+    // canvas vars
+var canvas=document.getElementById("canvas");
+var ctx=canvas.getContext("2d");
+var cw=canvas.width;
+var ch=canvas.height;
+
+// linear interpolation utility
+var lerp=function(a,b,x){ return(a+x*(b-a)); };
+
+// qCurve & line defs
+var p1={x:753,y:585};
+var p2={x:734,y:635};
+var p3={x:753,y:685};
+var a1={x:245,y:662};
+var a2={x:2346.5,y:662};
+
+// calc the intersections
+var points=calcQLintersects(p1,p2,p3,a1,a2);
+
+// plot the curve, line & solution(s)
+var textPoints='Intersections: ';
+ctx.beginPath();
+ctx.moveTo(p1.x,p1.y);
+ctx.quadraticCurveTo(p2.x,p2.y,p3.x,p3.y);
+ctx.moveTo(a1.x,a1.y);
+ctx.lineTo(a2.x,a2.y);
+ctx.stroke();
+ctx.beginPath();
+for(var i=0;i<points.length;i++){
+  var p=points[i];
+  ctx.moveTo(p.x,p.y);
+  ctx.arc(p.x,p.y,4,0,Math.PI*2);
+  ctx.closePath();
+  textPoints+=' ['+parseInt(p.x)+','+parseInt(p.y)+']';
+}
+ctx.font='14px verdana';
+ctx.fillText(textPoints,10,20);
+ctx.fillStyle='red';
+ctx.fill();
+
+///////////////////////////////////////////////////
+
+function calcQLintersects(p1, p2, p3, a1, a2) {
+  var intersections=[];
+
+  // inverse line normal
+  var normal={
+    x: a1.y-a2.y,
+    y: a2.x-a1.x,
+  }
+
+  // Q-coefficients
+  var c2={
+    x: p1.x + p2.x*-2 + p3.x,
+    y: p1.y + p2.y*-2 + p3.y
+  }
+
+  var c1={
+    x: p1.x*-2 + p2.x*2,
+    y: p1.y*-2 + p2.y*2,
+  }
+
+  var c0={
+    x: p1.x,
+    y: p1.y
+  }
+
+  // Transform to line 
+  var coefficient=a1.x*a2.y-a2.x*a1.y;
+  var a=normal.x*c2.x + normal.y*c2.y;
+  var b=(normal.x*c1.x + normal.y*c1.y)/a;
+  var c=(normal.x*c0.x + normal.y*c0.y + coefficient)/a;
+
+  // solve the roots
+  var roots=[];
+  d=b*b-4*c;
+  if(d>0){
+    var e=Math.sqrt(d);
+    roots.push((-b+Math.sqrt(d))/2);
+    roots.push((-b-Math.sqrt(d))/2);
+  }else if(d==0){
+    roots.push(-b/2);
+  }
+
+  // calc the solution points
+  for(var i=0;i<roots.length;i++){
+    var minX=Math.min(a1.x,a2.x);
+    var minY=Math.min(a1.y,a2.y);
+    var maxX=Math.max(a1.x,a2.x);
+    var maxY=Math.max(a1.y,a2.y);
+    var t = roots[i];
+    if (t>=0 && t<=1) {
+      // possible point -- pending bounds check
+      var point={
+        x:lerp(lerp(p1.x,p2.x,t),lerp(p2.x,p3.x,t),t),
+        y:lerp(lerp(p1.y,p2.y,t),lerp(p2.y,p3.y,t),t)
+      }
+      var x=point.x;
+      var y=point.y;
+      // bounds checks
+      if(a1.x==a2.x && y>=minY && y<=maxY){  
+        // vertical line
+        intersections.push(point);
+      }else if(a1.y==a2.y && x>=minX && x<=maxX){
+        // horizontal line
+        intersections.push(point);
+      }else if(x>=minX && y>=minY && x<=maxX && y<=maxY){
+        // line passed bounds check
+        intersections.push(point);
+      }
+    }
+  }
+  return intersections;
+}
+</script>
+</body>
+</html>

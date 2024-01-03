@@ -1,9 +1,9 @@
 import Object from "./object.js";
-import {drawLightBeam} from "../core.js";
+import LightBeam from "./lightbeam.js";
 
 class Light extends Object{
-    constructor(x, y, radius, angle, object, ctx) {
-        super(x,y,angle, object, ctx)
+    constructor(position, radius, angle, object, ctx) {
+        super(position, angle, object, ctx)
         this.radius = radius;
         this.opacity = 1;
         this.draw();
@@ -12,19 +12,19 @@ class Light extends Object{
       draw() {
         this.ctx.save();
         this.object = new Path2D();
-        this.object.moveTo(this.x, this.y);
-        this.object.arc(this.x, this.y, this.radius,0, 360);
+        this.object.moveTo(this.position.x, this.position.y);
+        this.object.arc(this.position.x, this.position.y, this.radius,0, 360);
         this.ctx.fillStyle = `yellow`;
         this.ctx.fill(this.object);
         //this.ctx.stroke(this.object);
         this.ctx.restore();
-        console.log("draw")
-        drawLightBeam(this.x, this.y, this.angle, "white",this.opacity);
+        //console.log("draw")
+        new LightBeam(this.position.x, this.position.y, this.angle, 0,this.opacity);
       }
       getCenter(){
         const center = {
-          x: this.x,
-          y: this.y,
+          x: this.position.x,
+          y: this.position.y,
         };
     
         return center;

@@ -1,13 +1,14 @@
 import Object from "./object.js";
 
 class ConvexLens extends Object {
-  constructor(x, y, r1, r2, focalLength, angle, ctx, object) {
-    super(x, y, angle, object, ctx);
+  constructor(position, r1, r2, focalLength, angle, ctx, object) {
+    super(position, angle, object, ctx);
     this.r1 = r1;
     this.r2 = r2;
     this.width = 100;
     this.height = 100;
-
+    this.x = position.x;
+    this.y = position.y;
     this.focalLength = focalLength;
     this.maxX = this.x + this.width + this.r2;
     this.minX = this.x - this.r1;
@@ -58,21 +59,21 @@ class ConvexLens extends Object {
       height: maxY - minY,
     };
   }
-//TODO: Implement
+  //TODO: Implement
   isPointInStroke(x, y, x2, y2) {
-    console.log(x, y, x2, y2);
+    console.log({ x: x, y: y },
+      { x: x2, y: y2 },
+      { x: this.x + this.width, y: this.y },
+      { x: this.maxX, y: this.y + this.height / 2 },
+      { x: this.x + this.width, y: this.y + this.height })
     return this.findIntersectionPoint(
-      x,
-      y,
-      x2,
-      y2,
-      this.x + this.width,
-      this.y,
-      this.maxX,
-      this.y + this.height / 2,
-      this.x + this.width,
-      this.y + this.height
-    );
+        { x: x, y: y },
+        { x: x2, y: y2 },
+        { x: this.x + this.width, y: this.y },
+        { x: this.maxX, y: this.y + this.height / 2 },
+        { x: this.x + this.width, y: this.y + this.height }
+      )
+    
   }
   getCenter() {
     const center = {
